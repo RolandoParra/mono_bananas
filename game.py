@@ -1,5 +1,6 @@
 import pygame
 import random
+import time
 from assets.src.classes import banana, player, puntaje, vidas
 
 pygame.init()
@@ -9,40 +10,66 @@ coin = pygame.mixer.Sound("assets/sounds/coin.mp3")
 bg = pygame.image.load("assets/images/BG.png")
 screen = pygame.display.set_mode((1024, 800))
 blanco = (255, 255, 255)
+clock = pygame.time.Clock()
+
+# Crear instancias de las clases
+banana_obj = banana()
+player_obj = player()
+puntaje_obj = puntaje
+vidas_obj = vidas
 
 
 while True:
+    clock.tick(60)  # 60 FPS
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
 
-    bg = pygame.image.load("assets/images/BG.png")
-    screen = pygame.display.set_mode((1024, 800))
     screen.blit(bg, (0, 0))
-
-    screen.blit(banana.sp_banana, (banana.x, banana.y))
-    screen.blit(player.sp_player, (player.x, 700))
+    
+    # Llamar a los movimientos
+    banana_obj.move()
+    player_obj.move(None)
+    
+    # Actualizar rect del jugador con su nueva posición x
+    player_obj.rect.x = player_obj.x
+    
+    screen.blit(banana_obj.sp_banana, (banana_obj.x, banana_obj.y))
+    screen.blit(player_obj.sp_player, (player_obj.x, player_obj.rect.y))
     fuente = pygame.font.SysFont("comic sans ms", 35, 1, 1)
-    texto = fuente.render(str(puntaje), 1, blanco)
-    screen.blit(texto, (0, 50))
+    texto1 = fuente.render("puntos: " + str(puntaje_obj.score), 1, blanco)
+    texto2 = fuente.render("vidas: " + str(vidas_obj.lives), 1, blanco)
+    screen.blit(texto1, (50, 50))
+    screen.blit(texto2, (50, 100))
 
-    if player.rect.colliderect(banana.rect):
+    if player_obj.rect.colliderect(banana_obj.rect):
         coin.play()
-        puntaje.score += 1
-        banana.rect.x = random.randint(0, 750)
-        banana.rect.y = random.randint(0, 550)
+        puntaje_obj.score += 1
+        banana_obj.rect.x = random.randint(0, 750)
+        banana_obj.rect.y = random.randint(0, 0)
+        banana_obj.x = banana_obj.rect.x
+        banana_obj.y = banana_obj.rect.y
 
-    if player.rect.colliderect(vidas.rect):
+    if player_obj.rect.colliderect(vidas_obj.rect):
         lost.play()
-        vidas.lives -= 1
-        vidas.rect.x = random.randint(0, 750)
-        vidas.rect.y = random.randint(0, 550)
+        vidas_obj.lives -= 1
+        vidas_obj.rect.x = random.randint(0, 750)
+        vidas_obj.rect.y = random.randint(0, 550)
 
-    if vidas.lives <= 0:
+    if vidas_obj.lives <= 0:
         lost.play()
+        time.sleep(7)
         print("Game Over")
         pygame.quit()
         exit()
+    
+    if banana_obj.rect.y > 800:
+        banana_obj.delete()
+        banana_obj.rect.x = random.randint(0, 750)
+        banana_obj.rect.y = random.randint(0, 0)
+        banana_obj.x = banana_obj.rect.x
+        banana_obj.y = banana_obj.rect.y
 
-    pygame.display.update()
+    pygame.display.flip()
