@@ -19,7 +19,7 @@ vidas = vidas()
 class banana(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.sp_banana = pygame.image.load('assets/images/banana.jpg')
+        self.sp_banana = pygame.image.load('assets/images/banana.png')
         self.image = self.sp_banana
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(0, 800)
