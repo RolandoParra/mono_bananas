@@ -49,9 +49,9 @@ class player(pygame.sprite.Sprite):
     def move(self, direction):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a] and self.x > 0:
-            self.x -= 12
+            self.x -= 20
         elif keys[pygame.K_d] and self.x < 750:
-            self.x += 12
+            self.x += 20
     
     def comer(self, banana):
         if self.sprite.collide_rect(self, banana):
